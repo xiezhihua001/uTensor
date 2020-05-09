@@ -12,6 +12,7 @@
 #include "constants_argmin.hpp"
 
 using namespace uTensor;
+using  uTensor::ReferenceOperators::ArgMinOperator;
  
 TEST(ArgMin, random_argmin_test) {
   localCircularArenaAllocator<1024> meta_allocator;

@@ -12,6 +12,7 @@
 #include "constants_argmax.hpp"
 
 using namespace uTensor;
+using namespace uTensor::ReferenceOperators;
  
 TEST(ArgMax, random_argmax_test) {
   localCircularArenaAllocator<1024> meta_allocator;
