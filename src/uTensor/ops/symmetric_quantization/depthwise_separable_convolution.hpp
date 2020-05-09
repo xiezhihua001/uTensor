@@ -9,31 +9,11 @@
 namespace uTensor {
 DECLARE_ERROR(qDwsConvPerChannelMismatchError);
 
-namespace TFLM {
+namespace TflmSymQuantOps {
 
 // Keep this outside the Operator since we can include this file in the
 // Optimized Ops and get option data.
-static const int kMaxChannels = 32;  // was 256
 constexpr int kDepthwiseConvQuantizedDimension = 3;
-
-struct DWSConvOpData {
-  TfLitePaddingValues padding;
-  // The scaling factor from input to output (aka the 'real multiplier') can
-  // be represented as a fixed point multiplier plus a left shift.
-  int32_t output_multiplier;
-  int output_shift;
-
-  // Per channel output multiplier and shift.
-  // TODO(b/141139247): Allocate these dynamically when possible.
-  int32_t per_channel_output_multiplier[kMaxChannels];
-  int32_t per_channel_output_shift[kMaxChannels];
-
-  // The range of the fused activation layer. For example for kNone and
-  // uint8_t these would be 0 and 255.
-  int32_t output_activation_min;
-  int32_t output_activation_max;
-};
-}  // namespace TFLM
 
 template <typename Tout>
 class QuantizedDepthwiseSeparableConvOperator : public OperatorInterface<3, 1> {
@@ -145,7 +125,7 @@ void QuantizedDepthwiseSeparableConvOperator<Tout>::calculateOpData(
                                   &unused_output_height, &unused_output_width);
 
   int num_channels =
-      filter->get_shape()[TFLM::kDepthwiseConvQuantizedDimension];
+      filter->get_shape()[kDepthwiseConvQuantizedDimension];
   QuantizationParams affine_quantization = filter->get_quantization_params();
   const bool is_per_channel = affine_quantization.num_channels() > 1;
 
@@ -220,7 +200,7 @@ void QuantizedDepthwiseSeparableConvOperator<Tout>::compute() {
 
   int num_channels = inputs[filter]
                          .tensor()
-                         ->get_shape()[TFLM::kDepthwiseConvQuantizedDimension];
+                         ->get_shape()[kDepthwiseConvQuantizedDimension];
   per_channel_output_multiplier = reinterpret_cast<int32_t*>(
       ram_allocator->allocate(sizeof(int32_t) * num_channels));
   per_channel_output_shift = reinterpret_cast<int32_t*>(
@@ -276,5 +256,6 @@ void QuantizedDepthwiseSeparableConvOperator<Tout>::compute() {
   ram_allocator->deallocate(per_channel_output_multiplier);
 }
 
+}
 }  // namespace uTensor
 #endif

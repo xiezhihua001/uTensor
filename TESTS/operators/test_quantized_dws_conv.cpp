@@ -10,6 +10,7 @@ using std::cout;
 using std::endl;
 
 using namespace uTensor;
+using namespace TflmSymQuantOps;
 
 
 

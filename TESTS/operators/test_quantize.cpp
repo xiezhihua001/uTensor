@@ -12,6 +12,7 @@
 #include "constants_quantize.hpp"
 
 using namespace uTensor;
+using namespace TflmSymQuantOps;
  
 TEST(Quantized, reference_0_quantize) {
   localCircularArenaAllocator<1024> meta_allocator;
@@ -25,10 +26,10 @@ TEST(Quantized, reference_0_quantize) {
   Tensor output_tensor = new RamTensor({ 1,28,28,1 }, i8);
   output_tensor->set_quantization_params(PerTensorQuantizationParams(zp, scale));
 
-  ::TFLM::QuantizeOperator<int8_t, float> op;
+  QuantizeOperator<int8_t, float> op;
   op
-    .set_inputs({ { TFLM::QuantizeOperator<int8_t, float>::input, input_tensor } })
-    .set_outputs({ { TFLM::QuantizeOperator<int8_t, float>::output, output_tensor } })
+    .set_inputs({ { QuantizeOperator<int8_t, float>::input, input_tensor } })
+    .set_outputs({ { QuantizeOperator<int8_t, float>::output, output_tensor } })
     .eval();
   for (int i = 0; i < 784; ++i) {
     int8_t value = static_cast<int8_t>(output_tensor(i));
