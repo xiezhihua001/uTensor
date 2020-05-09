@@ -72,7 +72,7 @@ class QuantizedMatrixMultiplyOperator<int8_t> : public OperatorInterface<3, 1> {
 };
 
 template <typename Tout>
-using QuantizedFullyConnectedOperator = QuantizedMatrixMultiplyOperator<Tout>;
+using FullyConnectedOperator = QuantizedMatrixMultiplyOperator<Tout>;
 
 }
 }  // namespace uTensor
